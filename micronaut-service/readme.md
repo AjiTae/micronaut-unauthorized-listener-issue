@@ -4,4 +4,4 @@ Simple http service on port 8080. Produces and tries to listen topics "kafka.tes
 
 /error - unauthorized
 
-Set enviroment variable TESTING_KAFKA_AUTH_SERVER to kafaka server (default 192.168.99.100:9092).
+Set enviroment variable TESTING_KAFKA_AUTH_SERVER to kafka server (default 192.168.99.100:9092).
