@@ -1,0 +1,95 @@
+plugins {
+  id "io.spring.dependency-management" version "1.0.6.RELEASE"
+  id "com.github.johnrengelman.shadow" version "4.0.2"
+  id "net.ltgt.apt-eclipse" version "0.18"
+  id "net.ltgt.apt-idea" version "0.18"
+}
+apply plugin: "application"
+apply plugin: "java"
+apply plugin: 'maven'
+apply plugin: 'project-report'
+apply plugin: 'idea'
+
+idea {
+  module {
+    downloadSources = true
+    downloadJavadoc = true
+  }
+}
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+tasks.withType(JavaExec) {
+  systemProperties System.properties
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+
+  maven { url "https://repo.grails.org/grails/core" }
+  maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+  maven { url "http://central.maven.org/maven2/" }
+  maven { url "http://repo.spring.io/libs-milestone/" }
+  maven { url "http://repo.maven.apache.org/maven2" }
+  maven { url "https://plugins.gradle.org/m2/" }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+group = groupId
+version = groupVersion
+
+dependencyManagement {
+  imports {
+    mavenBom "io.micronaut:micronaut-bom:${micronautVersion}"
+  }
+}
+
+dependencies {
+  annotationProcessor "io.micronaut:micronaut-inject-java"
+  annotationProcessor "io.micronaut:micronaut-validation"
+
+  compile "io.micronaut.configuration:micronaut-kafka:1.1.0.RC1"
+
+  compile "io.micronaut:micronaut-management"
+  compile "io.micronaut:micronaut-http-client"
+  compile "io.micronaut:micronaut-http-server-netty"
+  compile "io.micronaut:micronaut-inject"
+  compile "io.micronaut:micronaut-validation"
+  compile "io.micronaut:micronaut-runtime"
+  compile "io.micronaut.configuration:micronaut-micrometer-core"
+  compile "io.micronaut.configuration:micronaut-micrometer-registry-statsd"
+  compile "io.micronaut:micronaut-management"
+
+  compileOnly "io.micronaut:micronaut-inject-java"
+
+  runtime "ch.qos.logback:logback-classic:1.2.3"
+
+  testCompile "junit:junit:4.12"
+  testCompile "io.micronaut:micronaut-inject-java"
+  testCompile "org.hamcrest:hamcrest-all:1.3"
+}
+
+shadowJar {
+  mergeServiceFiles()
+  manifest {
+    attributes 'Main-Class': "kafka.testing.service.Application"
+  }
+  classifier = null
+}
+
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
+
+mainClassName = "kafka.testing.service.Application"
+compileJava.options.compilerArgs += '-parameters'
+compileTestJava.options.compilerArgs += '-parameters'
+
+test {
+  environment "TESTING_KAFKA_AUTH_SERVER", "192.168.99.100:9092"
+}
+
+run {
+  environment "TESTING_KAFKA_AUTH_SERVER", "192.168.99.100:9092"
+}

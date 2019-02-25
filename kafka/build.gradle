@@ -1,0 +1,65 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "com.github.johnrengelman.shadow" version "4.0.2"
+    id "net.ltgt.apt-eclipse" version "0.18"
+    id "net.ltgt.apt-idea" version "0.18"
+}
+
+apply plugin: "application"
+apply plugin: "java"
+apply plugin: 'maven'
+apply plugin: 'project-report'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+group = groupId
+version = groupVersion
+
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(JavaExec) {
+    systemProperties System.properties
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://jcenter.bintray.com" }
+}
+
+dependencies {
+	compile 'log4j:log4j:1.2.17'
+	compileOnly 'org.apache.kafka:kafka_2.11:2.1.0'
+
+	testCompile "junit:junit:4.12"
+}
+
+shadowJar {
+  mergeServiceFiles()
+  classifier = null
+}
+
+project.mainClassName = "kafka.testing.authorize.Authorizer"
+compileJava.options.compilerArgs += '-parameters'
+compileTestJava.options.compilerArgs += '-parameters'
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,11 @@
+---
+micronaut:
+  application:
+    name: kafka-testing-service
+    default-charset: UTF-8
+  server:
+    port: 8080
+---
+kafka:
+  bootstrap:
+    servers: ${TESTING_KAFKA_AUTH_SERVER}
